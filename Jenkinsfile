@@ -5,7 +5,7 @@ pipeline {
         stage("build-containers") {
             steps {
                 echo "building the containers"
-                sh "docker-compose up"
+                sh "docker-compose up -d"
             }
         }
     }
