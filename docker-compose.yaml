@@ -1,0 +1,27 @@
+services:
+  app:
+    restart: unless-stopped
+    build:
+      dockerfile: ./Dockerfile
+    depends_on:
+      - db
+    networks:
+      - app-db
+    ports: 
+      - 3000:3000
+  
+  db:
+    restart: unless-stopped
+    image: mongo:4.2.0
+    volumes:
+      - db_data:/data/db
+    networks:
+      - app-db
+    ports:
+      - 27017:27017
+
+networks:
+  app-db:
+
+volumes:
+  db_data:
