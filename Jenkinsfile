@@ -17,7 +17,7 @@ pipeline {
         stage("3. Scan Images") {
             steps {
                 echo "scanning the images"
-                sh "trivy image --exit-code 0 --severity HIGH,CRITICAL $(docker images -q)"
+                sh "trivy image --severity HIGH,CRITICAL --exit-code 1 restaurant-ops-app:latest"
             }
         }
 
