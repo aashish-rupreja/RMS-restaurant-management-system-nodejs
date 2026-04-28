@@ -8,6 +8,7 @@ pipeline {
         FULL_IMAGE = "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
         LATEST_IMAGE = "${REGISTRY}/${IMAGE_NAME}:latest"
         ALLOW_VULN = "true"
+        NOTIFY_EMAIL = "aashish.rupreja25@spit.ac.in"
     }
 
     stages {
@@ -85,36 +86,71 @@ pipeline {
         }
     }
 
-    post {
-        success {
-            emailext(
-                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                    Deployment successful.
+post {
+    success {
+        emailext(
+            subject: "DEPLOYMENT SUCCESSFUL | ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+Deployment Status: SUCCESS
 
-                    Image: ${FULL_IMAGE}
-                    Job: ${env.JOB_NAME}
-                    Build: ${env.BUILD_NUMBER}
+Application Details:
+- Image: ${FULL_IMAGE}
+- Environment: Local (WSL Jenkins)
+- Service URL: http://localhost:3000
 
-                    Check details: ${env.BUILD_URL}
-                """,
-                to: "aashish.rupreja25@spit.ac.in"
-            )
-        }
+Build Information:
+- Job Name: ${env.JOB_NAME}
+- Build Number: ${env.BUILD_NUMBER}
+- Build URL: ${env.BUILD_URL}
+- Git Commit: ${env.GIT_COMMIT}
+- Git Branch: ${env.GIT_BRANCH}
 
-        failure {
-            emailext(
-                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
-                body: """
-                    Pipeline failed.
+Summary:
+- Build completed successfully
+- Image built and deployed
+- Health check passed
 
-                    Job: ${env.JOB_NAME}
-                    Build: ${env.BUILD_NUMBER}
+Next Steps:
+- Verify application functionality manually if needed
+- Monitor logs for runtime issues
 
-                    Check logs: ${env.BUILD_URL}
-                """,
-                to: "aashish.rupreja25@spit.ac.in"
-            )
-        }
+---
+Jenkins Automated Notification
+            """,
+            to: "${env.NOTIFY_EMAIL}"
+        )
     }
+
+    failure {
+        emailext(
+            subject: "DEPLOYMENT FAILED | ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+            body: """
+Deployment Status: FAILURE
+
+Build Information:
+- Job Name: ${env.JOB_NAME}
+- Build Number: ${env.BUILD_NUMBER}
+- Build URL: ${env.BUILD_URL}
+- Git Commit: ${env.GIT_COMMIT}
+- Git Branch: ${env.GIT_BRANCH}
+
+Likely Failure Points:
+- Build failure (Docker build / dependencies)
+- Security scan failure (Trivy)
+- Deployment failure (Docker Compose)
+- Health check timeout
+
+Immediate Actions:
+1. Check console logs: ${env.BUILD_URL}
+2. Identify failed stage
+3. Fix issue and re-run pipeline
+
+---
+Jenkins Automated Notification
+            """,
+            to: "${env.NOTIFY_EMAIL}"
+            attachLog: true
+        )
+    }
+}
 }
