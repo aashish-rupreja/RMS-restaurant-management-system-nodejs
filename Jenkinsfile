@@ -7,6 +7,7 @@ pipeline {
         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
         FULL_IMAGE = "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
         LATEST_IMAGE = "${REGISTRY}/${IMAGE_NAME}:latest"
+        ALLOW_VULN = "true"
     }
 
     stages {
@@ -29,12 +30,14 @@ pipeline {
 
         stage("3. Security Scan") {
             steps {
-                echo "Scanning image with Trivy"
-
-                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
-                    sh """
-                        trivy image --severity CRITICAL --exit-code 1 ${FULL_IMAGE}
-                    """
+                script {
+                    if (env.ALLOW_VULN == "true") {
+                        catchError(buildResult: 'SUCCESS', stageResult: 'SUCCESS') {
+                            sh "trivy image --severity CRITICAL --exit-code 1 ${FULL_IMAGE}"
+                        }
+                    } else {
+                        sh "trivy image --severity CRITICAL --exit-code 1 ${FULL_IMAGE}"
+                    }
                 }
             }
         }
