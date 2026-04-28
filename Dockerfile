@@ -1,9 +1,10 @@
-FROM node:lts-alpine3.22
+FROM node:18-alpine3.18
 
-WORKDIR /opt/RMS-restaurant-management-system-nodejs
+WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
 
 COPY . .
-
-RUN npm install
 
 CMD ["npm", "start"]
