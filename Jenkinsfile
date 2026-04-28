@@ -86,11 +86,35 @@ pipeline {
     }
 
     post {
-        failure {
-            echo "Pipeline failed. Investigate immediately."
-        }
         success {
-            echo "Deployment successful: ${FULL_IMAGE}"
+            emailext(
+                subject: "SUCCESS: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    Deployment successful.
+
+                    Image: ${FULL_IMAGE}
+                    Job: ${env.JOB_NAME}
+                    Build: ${env.BUILD_NUMBER}
+
+                    Check details: ${env.BUILD_URL}
+                """,
+                to: "aashish.rupreja25@spit.ac.in"
+            )
+        }
+
+        failure {
+            emailext(
+                subject: "FAILURE: ${env.JOB_NAME} #${env.BUILD_NUMBER}",
+                body: """
+                    Pipeline failed.
+
+                    Job: ${env.JOB_NAME}
+                    Build: ${env.BUILD_NUMBER}
+
+                    Check logs: ${env.BUILD_URL}
+                """,
+                to: "aashish.rupreja25@spit.ac.in"
+            )
         }
     }
 }
