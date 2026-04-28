@@ -62,7 +62,7 @@ pipeline {
                 withCredentials([file(credentialsId: 'env-config', variable: 'ENV_FILE')]) {
                     sh '''
                         set -e
-                        export FULL_IMAGE='"${FULL_IMAGE}"'
+                        export FULL_IMAGE=${FULL_IMAGE}
 
                         trap 'rm -f .env' EXIT
 
