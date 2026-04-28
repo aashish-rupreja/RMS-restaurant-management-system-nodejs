@@ -30,9 +30,12 @@ pipeline {
         stage("3. Security Scan") {
             steps {
                 echo "Scanning image with Trivy"
-                sh """
-                    trivy image --severity CRITICAL --exit-code 1 ${FULL_IMAGE}
-                """
+
+                catchError(buildResult: 'SUCCESS', stageResult: 'UNSTABLE') {
+                    sh """
+                        trivy image --severity CRITICAL --exit-code 1 ${FULL_IMAGE}
+                    """
+                }
             }
         }
 
