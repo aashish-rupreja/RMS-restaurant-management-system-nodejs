@@ -68,8 +68,6 @@ pipeline {
 
                         cp "$ENV_FILE" .env
 
-                        docker pull "$FULL_IMAGE"
-
                         docker compose up -d
 
                         timeout 30 bash -c "
