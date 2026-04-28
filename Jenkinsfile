@@ -149,7 +149,6 @@ Immediate Actions:
 Jenkins Automated Notification
             """,
             to: "${env.NOTIFY_EMAIL}"
-            attachLog: true
         )
     }
 }
