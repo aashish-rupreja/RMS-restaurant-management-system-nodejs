@@ -75,7 +75,7 @@ pipeline {
                         docker compose up -d
 
                         timeout 30 bash -c "
-                        until curl -f http://localhost:3000/; do
+                        until curl -f http://localhost:3000/ > /dev/null; do
                             sleep 2
                         done
                         "
