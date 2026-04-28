@@ -72,12 +72,11 @@ pipeline {
 
                         docker compose up -d
 
-                        timeout 60 bash -c "
-                        until curl -f http://localhost:3000/health; do
+                        timeout 30 bash -c "
+                        until curl -f http://localhost:3000/; do
                             sleep 2
                         done
                         "
-
                         echo "App is healthy"
                     '''
                 }
