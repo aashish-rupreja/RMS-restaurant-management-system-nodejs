@@ -7,7 +7,7 @@ pipeline {
         IMAGE_TAG = "${env.GIT_COMMIT.take(7)}"
         FULL_IMAGE = "${REGISTRY}/${IMAGE_NAME}:${IMAGE_TAG}"
         LATEST_IMAGE = "${REGISTRY}/${IMAGE_NAME}:latest"
-        ALLOW_VULN = "true"
+        ALLOW_VULN = "false"
         NOTIFY_EMAIL = "aashish.rupreja25@spit.ac.in"
     }
 
